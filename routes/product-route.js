@@ -6,21 +6,21 @@ const User = require('../models/user');
 const ProductForCart = require('../models/product_for_cart');
 
 // Function used in file
-function isUserExists() {
-    User.countDocuments({ _id: "62a0f434b12279967e5c9a7f" }, function (err, count) {
-        console.log("count user", count)
-        if (count == 1) {
-            console.log("return true in test user")
-            return true
-        }
-        else {
-            console.log("return false")
-            return false
+// function isUserExists() {
+//     User.countDocuments({ _id: "62a0f434b12279967e5c9a7f" }, function (err, count) {
+//         console.log("count user", count)
+//         if (count == 1) {
+//             console.log("return true in test user")
+//             return true
+//         }
+//         else {
+//             console.log("return false")
+//             return false
 
-        }
-    })
+//         }
+//     })
     
-}
+// }
 
 
 //Get all Method
@@ -179,7 +179,7 @@ router.post('/updateProductCart',auth.verifyToken, async (req, res) => {
     var productCart = req.body
     var id_user_from_token = req.user[0]._id
 
-     nbUsers =await User.countDocuments({_id : id_user_from_token}).exec()
+     nbUsers = await User.countDocuments({_id : id_user_from_token}).exec()
 
     if (nbUsers == 1) {
         ProductForCart.findByIdAndUpdate(productCart._id, productCart, {new: true})

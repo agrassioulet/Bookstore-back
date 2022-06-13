@@ -4,24 +4,7 @@ const Product = require('../models/product');
 const auth = require('../auth/auth');
 const User = require('../models/user');
 const ProductForCart = require('../models/product_for_cart');
-
-// Function used in file
-// function isUserExists() {
-//     User.countDocuments({ _id: "62a0f434b12279967e5c9a7f" }, function (err, count) {
-//         console.log("count user", count)
-//         if (count == 1) {
-//             console.log("return true in test user")
-//             return true
-//         }
-//         else {
-//             console.log("return false")
-//             return false
-
-//         }
-//     })
-    
-// }
-
+const Cart = require('../models/cart');
 
 //Get all Method
 router.get('/getAllProducts', async (req, res) => {
@@ -70,30 +53,28 @@ router.get('/update', async (req, res) => {
 
 
 //Post Add Product to Cart
-router.post('/addProductToCart', auth.verifyToken, async (req, res) => {
-    
-    console.log('in addProductToCart')
+router.post('/add-product-to-cart', auth.verifyToken, async (req, res) => {
+    console.log('in add-product-to-cart')
     console.log(req.body)
     console.log("req.user", req.user)
-    // Vérifier que l'utilisateur existe
-    var id_user = req.user[0]._id
+    try {
+        await User.exists({_id: req.user._id})
+        active_cart = await Cart.findOneAndUpdate({id_user:req.user._id, active: true},
+            {active: true, id_user:req.user._id} , {upsert: true})
+        console.log("active cart", active_cart)
+        productCart = await ProductForCart.findOneAndUpdate({id_cart: active_cart._id, id_product: req.body.id_product},
+            {id_product: req.body.id_product, id_cart: active_cart._id} , {upsert: true, new: true})
+        console.log("productCart", productCart)
+        productCart.quantity = productCart.quantity + req.body.quantity ?? 0
+        await productCart.save()
 
-    User.countDocuments({ _id: id_user }, function (err, count) {
-        if (count == 1) {
-            console.log("User finded")
-
-            ProductForCart.create({ id_user: id_user, id_product: req.body.id_product, quantity: req.body.quantity })
-                .then(function (data) {
-                    res.json({ status: 1, data: data });
-                })
-                .catch(function (err) {
-                    res.json({ status: 0, err: err });
-                });
-        }
-        else {
-            res.status(400).json({ status: 0, err: "Error on user" })
-        }
-    })
+        // productCart = await ProductForCart.create({id_product: req.body.id_product, id_cart: active_cart._id, 
+        // quantity: req.body.quantity})
+        res.status(200).json({ status: 1, data: productCart })
+    }
+    catch (error) {
+        res.status(400).json({ status: 0, message: error.message})
+    }
 })
 
 
@@ -151,51 +132,39 @@ router.get("/cart/:id", function (req, res) {
 
 
 // Get cart for a user in token
-router.get("/getCart", auth.verifyToken, function (req, res) {
-    console.log("for getCart")
-    var id_user_from_token = req.user[0]._id
+router.get("/get-cart", auth.verifyToken, async function (req, res) {
+    console.log("for get-cart")
 
-    if (true) { //isUserExists(id_user_from_token)
-        ProductForCart.find({ id_user: id_user_from_token })
-            .populate("id_user")
-            .populate("id_product")
-            .then(function (data) {
-                res.json({ status: 1, data: data });
-            })
-            .catch(function (err) {
-                res.json({ status: 0, data: err })
-            });
+    try {
+        var activeCart = await Cart.findOneAndUpdate({id_user: req.user._id, active: true},
+            {active: true, id_user:req.user._id} , {upsert: true})
+        var result =  await ProductForCart.find({ id_cart: activeCart._id }).populate("id_product")
+        console.log("result", result)
+        res.status(200).json({ status: 1, data: result })
     }
-    else {
-        console.log("user not founded")
-        res.json({ status: 0, data: "User not founded" })
+    catch (error) {
+        res.status(400).json({ status: 0, message: error.message })
     }
 });
 
 
 //Update product cart by POST
-router.post('/updateProductCart',auth.verifyToken, async (req, res) => {
-    console.log("updateProductCart")
+router.post('/update-product-cart', auth.verifyToken, async (req, res) => {
+    console.log("update-product-cart")
     var productCart = req.body
-    var id_user_from_token = req.user[0]._id
 
-     nbUsers = await User.countDocuments({_id : id_user_from_token}).exec()
+    try {
+        if(productCart.quantity <= 0) {
+            data = await ProductForCart.findByIdAndDelete(productCart._id)
+        }
+        else {
+            data = await ProductForCart.findByIdAndUpdate(productCart._id, productCart, { new: true })
+        }
+        res.json({ status: 1, data: data })
 
-    if (nbUsers == 1) {
-        ProductForCart.findByIdAndUpdate(productCart._id, productCart, {new: true})
-            .then(function (data) {
-                res.json({ status: 1, data: data });
-            })
-            .catch(function (err) {
-                res.json({ status: 0, data: err })
-            });
+    } catch(error) {
+        res.json({ status: 0, data: error })
     }
-    else {
-        console.log("user not founded")
-        res.json({ status: 0, data: "User not founded" })
-    }
-
-    
 })
 
 

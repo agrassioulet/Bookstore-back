@@ -7,15 +7,17 @@ const dataSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: "product"
     },
-    id_user: {
+
+    id_cart: {
         required: true,
         type: Schema.Types.ObjectId,
-        ref: "user"
+        ref: "cart"
     },
 
     quantity: {
         required: true,
-        type: Number
+        type: Number,
+        default: 0
     }
 })
 

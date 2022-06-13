@@ -11,7 +11,7 @@ router.post('/register', async (req, res) => {
     console.log(req.body)
     let password = req.body.password
     const hashed_password = md5(password)
-		
+
     const data = new User({
         login: req.body.login,
         password: hashed_password,
@@ -28,16 +28,16 @@ router.post('/register', async (req, res) => {
     try {
         console.log("before save")
         const dataToSave = await data.save();
-		let token = jwt.sign({ data: dataToSave }, 'secret')
-        res.status(200).json({ status: 1, data: dataToSave, token : token })
+        let token = jwt.sign({ data: dataToSave }, 'secret')
+        res.status(200).json({ status: 1, data: dataToSave, token: token })
     }
     catch (error) {
-        res.status(400).json({status: 0, message: error.message})
+        res.status(400).json({ status: 0, message: error.message })
     }
 
 })
 
-// Post Login
+// Post login
 router.post('/login', async (req, res) => {
     console.log('for login')
     console.log(req.body)
@@ -46,35 +46,52 @@ router.post('/login', async (req, res) => {
 
     const hashed_password = md5(password)
 
-    try{
-        const result = await User.findOne({login: login, password: hashed_password});
+    try {
+        const result = await User.findOne({ login: login, password: hashed_password });
         let token = jwt.sign({ data: result }, 'secret')
-    res.status(200).json({ status: 1, data: result[0] ?? {}, token : token })    
+        res.status(200).json({ status: 1, data: result[0] ?? {}, token: token })
     }
-    catch(error){
-        res.status(400).json({status: 0, message: error.message})
+    catch (error) {
+        res.status(400).json({ status: 0, message: error.message })
     }
 })
 
 
 // Get user informations
-router.get('/get-user-infos',auth.verifyToken, async (req, res) => {
+router.get('/get-user-infos', auth.verifyToken, async (req, res) => {
     console.log('for get-user-infos')
     console.log(req.body)
 
     console.log("req.user", req.user)
 
-    try{
+    try {
         var id_user_from_token = req.user._id
-        console.log("id_user_from_token",id_user_from_token)
+        console.log("id_user_from_token", id_user_from_token)
         const result = await User.findById(id_user_from_token);
         console.log("before res status 200")
-        res.status(200).json({ status: 1, data: result })    
+        res.status(200).json({ status: 1, data: result })
     }
-    catch(error){
-        res.status(400).json({status: 0, message: error.message})
+    catch (error) {
+        res.status(400).json({ status: 0, message: error.message })
     }
 })
 
+
+// Save user infos
+router.post('/save-user-infos', auth.verifyToken, async (req, res) => {
+    console.log('for save-user-infos')
+    console.log(req.body)
+
+    try {
+        console.log("before save")
+        await User.updateOne({ _id: req.user._id }, req.body);
+        const dataToSave = await User.findById(req.user._id);
+        let token = jwt.sign({ data: dataToSave }, 'secret')
+        res.status(200).json({ status: 1, data: dataToSave, token: token })
+    }
+    catch (error) {
+        res.status(400).json({ status: 0, message: error.message, token: '' })
+    }
+})
 
 module.exports = router;

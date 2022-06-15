@@ -10,7 +10,7 @@ const dataSchema = new mongoose.Schema({
     },
 
     dateOfBirth: {
-        type: String
+        type: Date
     },
     postalCode: {
         type: String

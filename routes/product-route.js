@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/product');
 const auth = require('../auth/auth');
+const ProductOperations = require('../operations/product-route-operations')
 const User = require('../models/user');
 const ProductForCart = require('../models/product_for_cart');
 const Cart = require('../models/cart');
@@ -137,7 +138,8 @@ router.get("/get-cart", auth.verifyToken, async function (req, res) {
 
     try {
         var activeCart = await Cart.findOneAndUpdate({id_user: req.user._id, active: true},
-            {active: true, id_user:req.user._id} , {upsert: true})
+            {active: true, id_user:req.user._id} , {upsert: true, new: true})
+        console.log("activeCart", activeCart)
         var result =  await ProductForCart.find({ id_cart: activeCart._id }).populate("id_product")
         console.log("result", result)
         res.status(200).json({ status: 1, data: result })
@@ -166,6 +168,30 @@ router.post('/update-product-cart', auth.verifyToken, async (req, res) => {
         res.json({ status: 0, data: error })
     }
 })
+
+
+
+
+// Get Order active cart
+router.get("/order-cart", auth.verifyToken, async function (req, res) {
+    console.log("for order-cart")
+    try {
+        var activeCart = await Cart.findOne({id_user: req.user._id, active: true})
+
+        activeCart.status = 'IN_PREPARATION'
+        activeCart.active = false
+        activeCart.order_date = Date.now()
+        activeCart.client_ref = ProductOperations.makeid(10)
+        await activeCart.save()
+        console.log(activeCart)
+
+        res.status(200).json({ status: 1, data: activeCart })
+    }
+    catch (error) {
+        res.status(400).json({ status: 0, data: error.message })
+    }
+});
+
 
 
 module.exports = router;

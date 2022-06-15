@@ -14,7 +14,16 @@ const dataSchema = new mongoose.Schema({
     },
     order_date: {
         type: Date
-    }
+    },
+    status: {
+        type: String,
+        enum: ['NOT_SENT', 'WAITING_FOR_PAYMENT', 'IN_PREPARATION'],
+        default: 'NOT_SENT'
+      },
+      client_ref: {
+        type: String,
+      }
+
 
 })
 

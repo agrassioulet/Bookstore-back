@@ -37,11 +37,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors())
+
+
+app.get('/test',(req, res) => {
+        res.status(200).json({ message: 'Test success' })
+})
+
+
 app.use('/user', userRouter);
 app.use('/profile', profileRouter);
 app.use('/product', productRouter);
 
-app.listen(4000, () => {
-    console.log('listening on port 4000');
+
+port = process.env.PORT || 80
+
+app.listen(port, () => {
+    console.log('listening on port ' + port);
 })
 

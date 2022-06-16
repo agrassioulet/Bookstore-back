@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-const userRouter = require('./routes/user-route');
-const profileRouter = require('./routes/profile-route');
-const productRouter = require('./routes/product-route');
+// const userRouter = require('./routes/user-route');
+// const profileRouter = require('./routes/profile-route');
+// const productRouter = require('./routes/product-route');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');

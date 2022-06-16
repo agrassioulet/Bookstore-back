@@ -36,10 +36,10 @@ mongoose.connect(process.env.DATABASE_URL, function (err, db) {
 //     next();
 // });
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(express.json());
-app.use(cors())
+// app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
+// app.use(express.json());
+// app.use(cors())
 
 
 app.get('/test',(req, res) => {
@@ -47,9 +47,9 @@ app.get('/test',(req, res) => {
 })
 
 
-app.use('/user', userRouter);
-app.use('/profile', profileRouter);
-app.use('/product', productRouter);
+// app.use('/user', userRouter);
+// app.use('/profile', profileRouter);
+// app.use('/product', productRouter);
 
 
 // port = process.env.PORT || 80
@@ -59,12 +59,8 @@ app.listen(process.env.PORT || 4000, () => {
 })
 
 //Get all Method
-app.get('/', async (req, res) => {
-    try {
-        const data = await Product.find();
-        res.json(data)
-    }
-    catch (error) {
-        res.status(500).json({ message: error.message })
-    }
+app.get('/',  (req, res) => {
+        // const data = await Product.find();
+         res.json("data")
+
 })

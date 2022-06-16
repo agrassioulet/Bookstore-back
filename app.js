@@ -7,6 +7,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+const Product = require('./models/product');
 // Database configuration
 // mongoose.connect(mongoString);
 // const database = mongoose.connection;
@@ -57,3 +58,13 @@ app.listen(process.env.PORT || 4000, () => {
     console.log('listening on port ' + port);
 })
 
+//Get all Method
+app.get('/', async (req, res) => {
+    try {
+        const data = await Product.find();
+        res.json(data)
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})

@@ -150,6 +150,23 @@ router.get("/get-cart", auth.verifyToken, async function (req, res) {
 });
 
 
+// Get All Carts
+router.get("/get-all-cart", auth.verifyToken, async function (req, res) {
+    console.log("for get-all-cart")
+
+    try {
+        var carts = await Cart.find({id_user: req.user._id, active: false})
+        console.log("activeCart", carts)
+        var result =  await ProductForCart.find({ id_cart: activeCart._id }).populate("id_product")
+        console.log("result", result)
+        res.status(200).json({ status: 1, data: result })
+    }
+    catch (error) {
+        res.status(400).json({ status: 0, message: error.message })
+    }
+});
+
+
 //Update product cart by POST
 router.post('/update-product-cart', auth.verifyToken, async (req, res) => {
     console.log("update-product-cart")

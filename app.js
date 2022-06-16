@@ -49,7 +49,8 @@ app.use('/profile', profileRouter);
 app.use('/product', productRouter);
 
 
-port = process.env.PORT || 80
+// port = process.env.PORT || 80
+port = 4000
 
 app.listen(port, () => {
     console.log('listening on port ' + port);

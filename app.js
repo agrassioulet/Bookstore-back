@@ -23,9 +23,9 @@ const Product = require('./models/product');
 // Instanciation App
 const app = express();
 
-mongoose.connect(process.env.DATABASE_URL, function (err, db) {
-     if(err) throw err;              
-});
+// mongoose.connect(process.env.DATABASE_URL, function (err, db) {
+//      if(err) throw err;              
+// });
 
 // Add middlewares
 // app.use(function (req, res, next) {
@@ -42,9 +42,10 @@ mongoose.connect(process.env.DATABASE_URL, function (err, db) {
 // app.use(cors())
 
 
-app.get('/test',(req, res) => {
-        res.status(200).json({ message: 'Test success' })
-})
+// app.get('/test',(req, res) => {
+
+//         res.status(200).json({ message: 'Test success' })
+// })
 
 
 // app.use('/user', userRouter);
@@ -61,6 +62,6 @@ app.listen(process.env.PORT || 4000, () => {
 //Get all Method
 app.get('/',  (req, res) => {
         // const data = await Product.find();
-         res.json("data")
+         res.json("HELLO WORD")
 
 })

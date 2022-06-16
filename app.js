@@ -56,12 +56,12 @@ const app = express();
 // port = process.env.PORT || 80
 
 app.listen(process.env.PORT || 4000, () => {
-    console.log('listening on port ' + port);
+    console.log('listening on port ');
 })
 
 //Get all Method
-app.get('/',  (req, res) => {
+app.get('/', async (req, res) => {
         // const data = await Product.find();
-         res.json("HELLO WORD")
+        res.json("HELLO WORD")
 
 })

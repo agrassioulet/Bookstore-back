@@ -6,23 +6,25 @@ const productRouter = require('./routes/product-route');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const mongoString = process.env.DATABASE_URL;
 
 // Database configuration
-mongoose.connect(mongoString);
-const database = mongoose.connection;
+// mongoose.connect(mongoString);
+// const database = mongoose.connection;
 
-database.on('error', (error) => {
-    console.log(error)
-})
+// database.on('error', (error) => {
+//     console.log(error)
+// })
 
-database.once('connected', () => {
-    console.log('Database Connected');
-})
+// database.once('connected', () => {
+//     console.log('Database Connected');
+// })
 
 // Instanciation App
 const app = express();
 
+mongoose.connect(process.env.DATABASE_URL, function (err, db) {
+     if(err) throw err;              
+});
 
 // Add middlewares
 // app.use(function (req, res, next) {
@@ -50,9 +52,8 @@ app.use('/product', productRouter);
 
 
 // port = process.env.PORT || 80
-port = 4000
 
-app.listen(port, () => {
+app.listen(process.env.PORT || 4000, () => {
     console.log('listening on port ' + port);
 })
 

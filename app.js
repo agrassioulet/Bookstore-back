@@ -1,24 +1,22 @@
-require('dotenv').config();
+require('dotenv').config()
 const express = require('express');
-// const userRouter = require('./routes/user-route');
-// const profileRouter = require('./routes/profile-route');
-// const productRouter = require('./routes/product-route');
+const userRouter = require('./routes/user-route');
+const productRouter = require('./routes/product-route');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const Product = require('./models/product');
 // Database configuration
-// mongoose.connect(mongoString);
-// const database = mongoose.connection;
+mongoose.connect(process.env.DATABASE_URL);
+const database = mongoose.connection;
 
-// database.on('error', (error) => {
-//     console.log(error)
-// })
+database.on('error', (error) => {
+    console.log(error)
+})
 
-// database.once('connected', () => {
-//     console.log('Database Connected');
-// })
+database.once('connected', () => {
+    console.log('Database Connected');
+})
 
 // Instanciation App
 const app = express();
@@ -36,24 +34,14 @@ const app = express();
 //     next();
 // });
 
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
-// app.use(express.json());
-// app.use(cors())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(express.json());
+app.use(cors())
 
 
-// app.get('/test',(req, res) => {
-
-//         res.status(200).json({ message: 'Test success' })
-// })
-
-
-// app.use('/user', userRouter);
-// app.use('/profile', profileRouter);
-// app.use('/product', productRouter);
-
-
-// port = process.env.PORT || 80
+app.use('/user', userRouter);
+app.use('/product', productRouter);
 
 app.listen(process.env.PORT || 4000, () => {
     console.log('listening on port ');

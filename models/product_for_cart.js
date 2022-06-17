@@ -5,13 +5,13 @@ const dataSchema = new mongoose.Schema({
     id_product: {
         required: true,
         type: Schema.Types.ObjectId,
-        ref: "product"
+        ref: "Product"
     },
 
     id_cart: {
         required: true,
         type: Schema.Types.ObjectId,
-        ref: "cart"
+        ref: "Cart"
     },
 
     quantity: {
@@ -21,4 +21,4 @@ const dataSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('product_for_cart', dataSchema)
+module.exports = mongoose.model('Product_for_cart', dataSchema)

@@ -8,7 +8,7 @@ const ProductForCart = require('../models/product_for_cart');
 const Cart = require('../models/cart');
 
 //Get all Method
-router.get('/getAllProducts', async (req, res) => {
+router.get('/get-all-products', async (req, res) => {
     try {
         const data = await Product.find();
         res.json(data)
@@ -19,7 +19,7 @@ router.get('/getAllProducts', async (req, res) => {
 })
 
 //Get products by category
-router.get('/getProductsByCategory/:category', async (req, res) => {
+router.get('/get-products-by-category/:category', async (req, res) => {
     try {
         const data = await Product.find({ category: req.params.category });
         res.json(data)
@@ -30,7 +30,7 @@ router.get('/getProductsByCategory/:category', async (req, res) => {
 })
 
 //Get product by ID
-router.get('/getProductById/:id', async (req, res) => {
+router.get('/get-product-by-id/:id', async (req, res) => {
     try {
         const data = await Product.findById(req.params.id);
         res.json(data)
@@ -41,74 +41,48 @@ router.get('/getProductById/:id', async (req, res) => {
 })
 
 
-//TEST - update product by ID
-router.get('/update', async (req, res) => {
-    try {
-        const data = await Product.updateMany({}, { title: "Veste compactable et imperméable" });
-        res.json(data)
-    }
-    catch (error) {
-        res.status(500).json({ message: error.message })
-    }
-})
-
-
 //Post Add Product to Cart
 router.post('/add-product-to-cart', auth.verifyToken, async (req, res) => {
-    console.log('in add-product-to-cart')
-    console.log(req.body)
-    console.log("req.user", req.user)
     try {
-        await User.exists({_id: req.user._id})
-        active_cart = await Cart.findOneAndUpdate({id_user:req.user._id, active: true},
-            {active: true, id_user:req.user._id} , {upsert: true})
+        console.log('in add-product-to-cart')
+        console.log(req.body)
+        active_cart = await Cart.findOneAndUpdate({ id_user: req.user._id, active: true },
+            { active: true, id_user: req.user._id }, { upsert: true })
         console.log("active cart", active_cart)
-        productCart = await ProductForCart.findOneAndUpdate({id_cart: active_cart._id, id_product: req.body.id_product},
-            {id_product: req.body.id_product, id_cart: active_cart._id} , {upsert: true, new: true})
+        productCart = await ProductForCart.findOneAndUpdate({ id_cart: active_cart._id, id_product: req.body.id_product },
+            { id_product: req.body.id_product, id_cart: active_cart._id }, { upsert: true, new: true })
         console.log("productCart", productCart)
         productCart.quantity = productCart.quantity + req.body.quantity ?? 0
+        active_cart.id_product_for_carts.push(productCart)
+        await active_cart.save()
         await productCart.save()
 
-        // productCart = await ProductForCart.create({id_product: req.body.id_product, id_cart: active_cart._id, 
-        // quantity: req.body.quantity})
         res.status(200).json({ status: 1, data: productCart })
+
     }
     catch (error) {
-        res.status(400).json({ status: 0, message: error.message})
+        res.status(500).json({ status: 0, data: error.message })
     }
+
 })
 
 
 //Get Products for Cart
-router.post('/getProductsForCart', auth.verifyToken, async (req, res) => {
-    console.log('for getProductsForCart')
+router.post('/get-products-for-cart', auth.verifyToken, async (req, res) => {
+    console.log('for get-products-for-cart')
     console.log(req.body)
-    console.log("req.user", req.user)
-    // Vérifier que l'utilisateur existe
-    var userID = req.user[0]._id
-    console.log("userID", userID)
-
-    User.countDocuments({ _id: userID }, function (err, count) {
-        if (count == 1) {
-            console.log("User founded")
-            try {
-                const data = ProductForCart.find({ id_user: userID });
-                res.status(200).json({ status: 1, data: dataToSave })
-            }
-            catch (error) {
-                res.status(400).json({ status: 0, data: error.message })
-            }
-
-
-        }
-        else {
-            res.status(400).json({ status: 0, data: "User not found" })
-        }
-    })
+    try {
+        const data = ProductForCart.find({ id_user: userID });
+        res.status(200).json({ status: 1, data: dataToSave })
+    }
+    catch (error) {
+        res.status(400).json({ status: 0, data: "User not found" })
+    }
 })
 
+
 // Method to create a new element in cart
-router.post("/createProductForCart", function (req, res) {
+router.post("/create-product-for-cart", function (req, res) {
     ProductForCart.create(req.body)
         .then(function (data) {
             res.json(data);
@@ -117,6 +91,7 @@ router.post("/createProductForCart", function (req, res) {
             res.json(err);
         });
 });
+
 
 // Get cart for a user in param
 router.get("/cart/:id", function (req, res) {
@@ -137,10 +112,10 @@ router.get("/get-cart", auth.verifyToken, async function (req, res) {
     console.log("for get-cart")
 
     try {
-        var activeCart = await Cart.findOneAndUpdate({id_user: req.user._id, active: true},
-            {active: true, id_user:req.user._id} , {upsert: true, new: true})
+        var activeCart = await Cart.findOneAndUpdate({ id_user: req.user._id, active: true },
+            { active: true, id_user: req.user._id }, { upsert: true, new: true })
         console.log("activeCart", activeCart)
-        var result =  await ProductForCart.find({ id_cart: activeCart._id }).populate("id_product")
+        var result = await ProductForCart.find({ id_cart: activeCart._id }).populate("id_product")
         console.log("result", result)
         res.status(200).json({ status: 1, data: result })
     }
@@ -151,18 +126,23 @@ router.get("/get-cart", auth.verifyToken, async function (req, res) {
 
 
 // Get All Carts
-router.get("/get-all-cart", auth.verifyToken, async function (req, res) {
-    console.log("for get-all-cart")
+router.get("/get-all-sent-carts", auth.verifyToken, async function (req, res) {
+    console.log("in get-all-sent-cart")
 
     try {
-        var carts = await Cart.find({id_user: req.user._id, active: false})
-        console.log("activeCart", carts)
-        var result =  await ProductForCart.find({ id_cart: activeCart._id }).populate("id_product")
-        console.log("result", result)
-        res.status(200).json({ status: 1, data: result })
+        //forget constraint , active: false
+
+        var carts = await Cart.find({ id_user: req.user._id, active: false }).populate({
+            path: 'id_product_for_carts',
+            populate: {
+                path: 'id_product'
+            }
+        })
+        console.log("carts", carts)
+        res.status(200).json({ status: 1, data: carts })
     }
     catch (error) {
-        res.status(400).json({ status: 0, message: error.message })
+        res.status(400).json({ status: 0, data: error.message })
     }
 });
 
@@ -173,7 +153,7 @@ router.post('/update-product-cart', auth.verifyToken, async (req, res) => {
     var productCart = req.body
 
     try {
-        if(productCart.quantity <= 0) {
+        if (productCart.quantity <= 0) {
             data = await ProductForCart.findByIdAndDelete(productCart._id)
         }
         else {
@@ -181,7 +161,7 @@ router.post('/update-product-cart', auth.verifyToken, async (req, res) => {
         }
         res.json({ status: 1, data: data })
 
-    } catch(error) {
+    } catch (error) {
         res.json({ status: 0, data: error })
     }
 })
@@ -193,7 +173,7 @@ router.post('/update-product-cart', auth.verifyToken, async (req, res) => {
 router.get("/order-cart", auth.verifyToken, async function (req, res) {
     console.log("for order-cart")
     try {
-        var activeCart = await Cart.findOne({id_user: req.user._id, active: true})
+        var activeCart = await Cart.findOne({ id_user: req.user._id, active: true })
 
         activeCart.status = 'IN_PREPARATION'
         activeCart.active = false

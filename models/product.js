@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 const dataSchema = new mongoose.Schema({
     title: {
@@ -7,7 +8,6 @@ const dataSchema = new mongoose.Schema({
     },
 
     description: {
-        required: true,
         type: String
     },
 
@@ -16,30 +16,30 @@ const dataSchema = new mongoose.Schema({
         type: Number
     },
 
-    stock: {
+    contributor: { type: Schema.Types.ObjectId, ref: 'contributor' },
+
+    img_url: {
+        type: String
+    },
+    language: {
         required: true,
+        type: String,
+        enum: ['english', 'french', 'spanish'],
+        default: 'french'
+    },
+    category: { type: Schema.Types.ObjectId, ref: 'category' },
+    isbn: {
+        type: String
+    },
+    page: {
         type: Number
     },
 
-    brand: {
-        required: true,
-        type: String
-    },
+    publication_date: {
+        type: Date,
+        default: Date.now()
+    }
 
-    category: {
-        required: true,
-        type: String
-    },
+},{collection: 'product'})
 
-    subcategory: {
-        required: true,
-        type: String
-    },
-
-    imageURL: {
-        required: true,
-        type: String
-    },
-})
-
-module.exports = mongoose.model('Product', dataSchema)
+module.exports = mongoose.model('product', dataSchema)

@@ -7,27 +7,23 @@ const User = require('../models/user');
 
 //Post Method Register
 router.post('/register', async (req, res) => {
-    console.log('for register')
+    console.log('in register')
     console.log(req.body)
     let password = req.body.password
     const hashed_password = md5(password)
 
-    const data = new User({
-        login: req.body.login,
+    const user = new User({
+        username: req.body.username,
         password: hashed_password,
-        email: '',
-        firstname: '',
-        lastname: '',
-        dateOfBirth: '',
-        postalCode: '',
-        city: '',
-        adress: '',
-        email: ''
+        email: req.body.email,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        email: req.body.email
     })
 
     try {
         console.log("before save")
-        const dataToSave = await data.save();
+        const dataToSave = await user.save();
         let token = jwt.sign({ data: dataToSave }, 'secret')
         res.status(200).json({ status: 1, data: dataToSave, token: token })
     }
@@ -39,20 +35,25 @@ router.post('/register', async (req, res) => {
 
 // Post login
 router.post('/login', async (req, res) => {
-    console.log('for login')
+    console.log('in login')
     console.log(req.body)
     let password = req.body.password
-    let login = req.body.login
-
+    let username = req.body.username
     const hashed_password = md5(password)
 
     try {
-        const result = await User.findOne({ login: login, password: hashed_password });
-        let token = jwt.sign({ data: result }, 'secret')
-        res.status(200).json({ status: 1, data: result[0] ?? {}, token: token })
+        const user = await User.findOne({ username: username, password: hashed_password });
+        console.log('Find user :', user)
+        if(user == null) { 
+            res.json({ status: 2, message: 'User not found'}) 
+        }
+        else {
+            let token = jwt.sign({ data: user }, 'secret')
+            res.json({ status: 1, data: user, token: token })
+        }
     }
     catch (error) {
-        res.status(400).json({ status: 0, message: error.message })
+        res.json({ status: 0, message: error.message })
     }
 })
 
@@ -61,14 +62,12 @@ router.post('/login', async (req, res) => {
 router.get('/get-user-infos', auth.verifyToken, async (req, res) => {
     console.log('for get-user-infos')
     console.log(req.body)
-
     console.log("req.user", req.user)
 
     try {
         var id_user_from_token = req.user._id
         console.log("id_user_from_token", id_user_from_token)
         const result = await User.findById(id_user_from_token);
-        console.log("before res status 200")
         res.status(200).json({ status: 1, data: result })
     }
     catch (error) {

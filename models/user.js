@@ -8,23 +8,10 @@ const dataSchema = new mongoose.Schema({
     lastname: {
         type: String
     },
-
-    dateOfBirth: {
-        type: Date
-    },
-    postalCode: {
-        type: String
-    },
-    city: {
-        type: String
-    },
-    adress: {
-        type: String
-    },
     email: {
         type: String
     },
-    login: {
+    username: {
         required: true,
         type: String
     },
@@ -32,6 +19,6 @@ const dataSchema = new mongoose.Schema({
         required: true,
         type: String
     }
-})
+},{collection: 'user'})
 
 module.exports = mongoose.model('User', dataSchema)

@@ -38,10 +38,6 @@ router.get('/get-all-categories', async (req, res) => {
 
 
 
-
-
-
-
 //////////////////////////////
 
 //Get products by category

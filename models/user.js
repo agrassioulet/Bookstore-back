@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 const dataSchema = new mongoose.Schema({
+
+    delivery_contact: {
+        type: Schema.Types.ObjectId,
+        ref: "delivery_contact"
+    },
 
     firstname: {
         type: String
@@ -21,4 +27,4 @@ const dataSchema = new mongoose.Schema({
     }
 },{collection: 'user'})
 
-module.exports = mongoose.model('User', dataSchema)
+module.exports = mongoose.model('user', dataSchema)

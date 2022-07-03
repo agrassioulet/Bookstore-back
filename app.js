@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express');
+const orderRouter = require('./routes/order-route');
 const userRouter = require('./routes/user-route');
 const productRouter = require('./routes/product-route');
 const cors = require('cors');
@@ -28,6 +29,8 @@ app.use(cors())
 
 app.use('/user', userRouter);
 app.use('/product', productRouter);
+app.use('/order', orderRouter);
+
 
 port = process.env.PORT || 3000
 app.listen(port, () => {

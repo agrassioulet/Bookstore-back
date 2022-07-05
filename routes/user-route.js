@@ -30,7 +30,6 @@ router.post('/register', async (req, res) => {
     catch (error) {
         res.status(400).json({ status: 0, message: error.message })
     }
-
 })
 
 // Post login
@@ -57,6 +56,26 @@ router.post('/login', async (req, res) => {
     }
 })
 
+// Post Save User Data
+router.post('/save-user-data', auth.verifyToken, async (req, res) => {
+    console.log('in save-user-data')
+    console.log(req.body)
+
+    try {
+        const user = await User.findOneAndUpdate({_id: req.user._id},{
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            email: req.body.email,
+            username: req.body.username,
+        }, {new: true});
+        res.json({ status: 1, data: user, message: 'Utilisateur mis à jour' })
+
+    }
+    catch (error) {
+        res.json({ status: 0, data: {}, message: error.message })
+    }
+})
+
 
 // Get user informations
 router.get('/get-user-infos', auth.verifyToken, async (req, res) => {
@@ -66,9 +85,8 @@ router.get('/get-user-infos', auth.verifyToken, async (req, res) => {
 
     try {
         var id_user_from_token = req.user._id
-        console.log("id_user_from_token", id_user_from_token)
-        const result = await User.findById(id_user_from_token);
-        res.status(200).json({ status: 1, data: result })
+        const result = await User.findById(id_user_from_token).populate('delivery_contact')
+        res.status(200).json({ status: 1, data: result, message: 'Informations utilisateur' })
     }
     catch (error) {
         res.status(400).json({ status: 0, message: error.message })

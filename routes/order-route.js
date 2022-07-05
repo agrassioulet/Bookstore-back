@@ -12,20 +12,24 @@ const ProductOperations = require('../operations/product-route-operations')
 
 
 //Get delivery contact for order
-router.get('/get-delivery-contact-in-order',auth.verifyToken, async (req, res) => {
-    console.log('in get-delivery-contact-in-order')
+router.get('/get-active-order', auth.verifyToken, async (req, res) => {
+    console.log('in get-active-order')
     try {
         console.log(req.body)
         console.log('req user : ' , req.user)
         var activeOrder = await Order.findOneAndUpdate({ user: req.user._id, active: true },
-            { active: true, user: req.user._id }, { upsert: true }).populate('delivery_contact')
+            { active: true, user: req.user._id }, { upsert: true }).populate('delivery_contact').populate({
+                path: 'product_cart',
+                populate: {path: 'product', populate: {path: 'category'}}
+            })        
         console.log('activeOrder', activeOrder)
-        res.json({ status: 1, data: activeOrder.delivery_contact, message: 'Infos de livraison renvoyées' })
+        res.json({ status: 1, data: activeOrder, message: 'Commande en cours' })
     }
     catch (error) {
         res.status(500).json({ status: 0, data: {}, message: error.message })
     }
 })
+
 
 // Save delivery contact for order
 router.post('/save-delivery-contact',auth.verifyToken, async (req, res) => {

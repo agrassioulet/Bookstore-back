@@ -44,31 +44,31 @@ const storeItems = [
   { priceInCents: 20000, name: "Learn CSS Today" }
 ]
 
-app.post("/create-checkout-session", async (req, res) => {
-  try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
-      line_items: storeItems.map(item => {
-        return {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: item.name,
-            },
-            unit_amount: item.priceInCents,
-          },
-          quantity: 2,
-        }
-      }),
-      success_url: 'http://localhost/payment/success',
-      cancel_url: 'http://localhost/payment/failure'
-    })
-    res.json({ url: session.url })
-  } catch (e) {
-    res.status(500).json({ error: e.message })
-  }
-})
+// app.post("/create-checkout-session", async (req, res) => {
+//   try {
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ["card"],
+//       mode: "payment",
+//       line_items: storeItems.map(item => {
+//         return {
+//           price_data: {
+//             currency: "usd",
+//             product_data: {
+//               name: item.name,
+//             },
+//             unit_amount: item.priceInCents,
+//           },
+//           quantity: 2,
+//         }
+//       }),
+//       success_url: 'http://localhost/payment/success',
+//       cancel_url: 'http://localhost/payment/failure'
+//     })
+//     res.json({ url: session.url })
+//   } catch (e) {
+//     res.status(500).json({ error: e.message })
+//   }
+// })
 
 
 

@@ -21,6 +21,9 @@ const dataSchema = new mongoose.Schema({
         required: true,
         type: String
     },
+    phone_number: {
+        type: String
+    },
     password: {
         required: true,
         type: String

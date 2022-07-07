@@ -15,7 +15,6 @@ router.get('/get-all-products', async (req, res) => {
     console.log('in get-all-product get')
     try {
         var products = await Product.find({}).populate("contributor").populate("category")
-        console.log(products)
         res.json({ status: 1, data: products })
     }
     catch (error) {
@@ -23,14 +22,30 @@ router.get('/get-all-products', async (req, res) => {
     }
 })
 
+// Get all categories
 router.get('/get-all-categories', async (req, res) => {
-    console.log('in get-all-categories get')
+    console.log('in get-all-categories')
     try {
         var categories = await Category.find({})
         res.json({ status: 1, data: categories })
     }
     catch (error) {
-        res.status(500).json({ status: 1, data: error })
+        res.status(500).json({ status: 1, data: error.message })
+    }
+})
+
+// Get category  with code
+router.post('/get-category-by-code', async (req, res) => {
+    console.log('in get-category-by-code')
+    try {
+        console.log('body: ', req.body.code)
+        var category = await Category.findOne({code: req.body.code})
+        console.log('cat: ', category)
+
+        res.json({ status: 1, data: category, message: 'Catégorie choisie' })
+    }
+    catch (error) {
+        res.status(500).json({ status: 0, data: {}, message: error.message })
     }
 })
 

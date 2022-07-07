@@ -27,16 +27,17 @@ async function updateProducts() {
     try {
         // var categories = await Category.find({})
         // var contributors = await Contributor.find({})
-        var products = await Product.find({}).populate("contributor").populate("category")
+        var products = await Product.find({})
         // console.log('Products : ' + products)
         products.forEach(product => {
             var num = Math.random() * 200
             num = num.toFixed(2);
-            // var randomCategory = categories[Math.floor(Math.random() * categories.length)];
+            var language = ['english', 'spanish', 'french']
+            var randomLanguage = language[Math.floor(Math.random() * 3)];
             // product.id_category = randomCategory
             // product.id_contributor = contributors[Math.floor(Math.random() * contributors.length)];
             // product.isbn = '284391749-2'
-            product.price = num
+            product.language = randomLanguage
             product.save()
             cpt++
 

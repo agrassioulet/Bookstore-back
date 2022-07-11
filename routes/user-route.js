@@ -5,6 +5,13 @@ const jwt = require('jsonwebtoken');
 const auth = require('../auth/auth');
 const User = require('../models/user');
 
+
+// TEST
+router.get('/test', async (req, res) => {
+    
+        res.json({ msg: 'ok' })
+})
+
 //Post Method Register
 router.post('/register', async (req, res) => {
     console.log('in register')

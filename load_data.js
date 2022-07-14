@@ -23,21 +23,49 @@ async function updateProducts() {
     // console.log('num : ' + num)
 
 
+    var imagebank = [
+
+
+        '179w2m44-ebook-shortedge-384.jpg',
+        '17g9rq8j-front-shortedge-384.jpg',
+        '17qyjj49-front-shortedge-384.jpg',
+        '18k4kyvg-ebook-shortedge-384.jpg',
+        '18r4ekrz-front-shortedge-384.jpg',
+        '195n5dqz-front-shortedge-384.jpg',
+        '19znjwdq-front-shortedge-384.jpg',
+        '1g2qj7e8-front-shortedge-384.jpg',
+        '1jnmygd4-ebook-shortedge-384.jpg',
+        '1k9je7me-ebook-shortedge-384.jpg',
+        '1k9qp6vr-front-shortedge-384.jpg',
+        '1qzwn4k-front-shortedge-384.jpg',
+        '1rv29rvg-front-shortedge-384.jpg',
+        '1zk92kdj-front-shortedge-384.jpg'
+
+    ]
+
+
     var cpt = 0
     try {
         // var categories = await Category.find({})
         // var contributors = await Contributor.find({})
-        var products = await Product.find({})
+        var category = await Category.findOne({code: '9O0YG974T5'})
+        var products = await Product.find({category: category})
+
+
         // console.log('Products : ' + products)
         products.forEach(product => {
-            var num = Math.random() * 200
-            num = num.toFixed(2);
-            var language = ['english', 'spanish', 'french']
-            var randomLanguage = language[Math.floor(Math.random() * 3)];
+
+
+
+
+            //var numPage = Math.floor(Math.random() * 500)
+            // num = num.toFixed(2);
+            // var language = ['english', 'spanish', 'french']
+            // var imagenamerandom = imagebank[Math.floor(Math.random() * imagebank.length)];
             // product.id_category = randomCategory
             // product.id_contributor = contributors[Math.floor(Math.random() * contributors.length)];
             // product.isbn = '284391749-2'
-            product.language = randomLanguage
+            product.img_url = '179w2m44-ebook-shortedge-384.jpg'
             product.save()
             cpt++
 

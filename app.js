@@ -11,6 +11,7 @@ const productRouter = require('./routes/product-route');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+nodeMailer = require('nodemailer');
 
 
 // INSTANCIATION APP

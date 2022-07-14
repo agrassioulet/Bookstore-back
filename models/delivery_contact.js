@@ -14,11 +14,16 @@ const dataSchema = new mongoose.Schema({
     },
 
     company: {
-        required: true,
+        required: false,
         type: String
     },
 
     country: {
+        required: true,
+        type: String
+    },
+
+    email: {
         required: true,
         type: String
     },

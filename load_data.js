@@ -48,7 +48,7 @@ async function updateProducts() {
     try {
         // var categories = await Category.find({})
         // var contributors = await Contributor.find({})
-        var category = await Category.findOne({code: '9O0YG974T5'})
+        var category = await Category.findOne({code: 'QW0PP9EPD9'})
         var products = await Product.find({category: category})
 
 
@@ -65,7 +65,7 @@ async function updateProducts() {
             // product.id_category = randomCategory
             // product.id_contributor = contributors[Math.floor(Math.random() * contributors.length)];
             // product.isbn = '284391749-2'
-            product.img_url = '179w2m44-ebook-shortedge-384.jpg'
+            product.img_url = '1k7eqyn-front-shortedge-384.jpg'
             product.save()
             cpt++
 

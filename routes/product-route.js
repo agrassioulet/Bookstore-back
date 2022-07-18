@@ -4,6 +4,7 @@ const auth = require('../auth/auth');
 const Product = require('../models/product');
 const Order = require('../models/order');
 const ProductCart = require('../models/product_cart');
+const Evaluation = require("../models/evaluation")
 const Category = require("../models/category")
 const Contributor = require("../models/contributor")
 const User = require('../models/user');
@@ -224,6 +225,40 @@ router.post('/update-product-cart', auth.verifyToken, async (req, res) => {
             productCart = await ProductCart.findByIdAndUpdate(productCart._id, productCart, { new: true })
         }
         res.json({ status: 1, data: productCart, message: 'Quantité mis à jour' })
+
+    } catch (error) {
+        res.json({ status: 0, data: {}, message: error })
+    }
+})
+
+
+// Post Add Evaluation
+router.post('/add-evaluation', auth.verifyToken, async (req, res) => {
+    console.log("add-evaluation")
+    console.log(req.body)
+
+    try {
+        var product = await Product.findById(req.body.productID)
+        var evaluation = new Evaluation ({user: req.user, note: req.body.note, comment: req.body.comment, product: product})
+        await evaluation.save()
+        res.json({ status: 1, data: evaluation, message: 'Evaluation ajoutée' })
+
+    } catch (error) {
+        res.json({ status: 0, data: {}, message: error })
+    }
+})
+
+
+// Post Get All Comments
+router.post('/get-comments', auth.verifyToken, async (req, res) => {
+    console.log("get-comments")
+    console.log(req.body)
+
+    try {
+        var product = await Product.findById(req.body.productID)
+        var evaluations = await Evaluation.find({product: product}).populate("user")
+        console.log('evaluations', evaluations)
+        res.json({ status: 1, data: evaluations, message: 'Liste des évaluations de ce produit' })
 
     } catch (error) {
         res.json({ status: 0, data: {}, message: error })
